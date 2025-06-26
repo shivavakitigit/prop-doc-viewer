@@ -24,7 +24,7 @@ export const DocumentViewer = ({ document, onClose }: DocumentViewerProps) => {
   };
 
   const handleDownload = () => {
-    const link = document.createElement('a');
+    const link = window.document.createElement('a');
     link.href = document.fileUrl;
     link.download = document.fileName;
     link.click();

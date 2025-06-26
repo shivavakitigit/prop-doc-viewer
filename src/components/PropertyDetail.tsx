@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { ArrowLeft, Upload, FileText, Image, FilePdf } from "lucide-react";
+import { ArrowLeft, Upload, FileText, Image } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";

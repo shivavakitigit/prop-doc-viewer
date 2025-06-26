@@ -1,7 +1,7 @@
 
 import { useCallback } from "react";
 import { useDropzone } from "react-dropzone";
-import { Upload, FileText, Image, FilePdf } from "lucide-react";
+import { Upload, FileText, Image } from "lucide-react";
 import { Card } from "@/components/ui/card";
 
 interface FileUploadProps {
@@ -60,7 +60,7 @@ export const FileUpload = ({ onFileUpload }: FileUploadProps) => {
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div className="flex items-center space-x-3 p-4 bg-red-50 rounded-lg">
-          <FilePdf className="h-6 w-6 text-red-600" />
+          <FileText className="h-6 w-6 text-red-600" />
           <div>
             <p className="font-medium text-gray-900">PDF Documents</p>
             <p className="text-sm text-gray-500">Contracts, reports, plans</p>

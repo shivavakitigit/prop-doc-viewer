@@ -1,5 +1,5 @@
 
-import { FileText, Image, FilePdf, Download, Eye, Calendar } from "lucide-react";
+import { FileText, Image, Download, Eye, Calendar } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -12,7 +12,7 @@ interface DocumentListProps {
 
 export const DocumentList = ({ documents, onDocumentSelect }: DocumentListProps) => {
   const getFileIcon = (fileType: string) => {
-    if (fileType.includes('pdf')) return <FilePdf className="h-5 w-5 text-red-600" />;
+    if (fileType.includes('pdf')) return <FileText className="h-5 w-5 text-red-600" />;
     if (fileType.includes('image')) return <Image className="h-5 w-5 text-green-600" />;
     return <FileText className="h-5 w-5 text-blue-600" />;
   };
@@ -78,7 +78,7 @@ export const DocumentList = ({ documents, onDocumentSelect }: DocumentListProps)
                   variant="outline"
                   size="sm"
                   onClick={() => {
-                    const link = document.createElement('a');
+                    const link = window.document.createElement('a');
                     link.href = document.fileUrl;
                     link.download = document.fileName;
                     link.click();
