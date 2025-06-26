@@ -1,5 +1,5 @@
 
-import { FileText, Image, Download, Eye, Calendar } from "lucide-react";
+import { FileText, Image, Download, Eye, Calendar, Trash2 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -8,9 +8,16 @@ import { Document } from "@/pages/Index";
 interface DocumentListProps {
   documents: Document[];
   onDocumentSelect: (document: Document) => void;
+  onDocumentDelete?: (documentId: string) => void;
+  deletingId?: string | null;
 }
 
-export const DocumentList = ({ documents, onDocumentSelect }: DocumentListProps) => {
+export const DocumentList = ({ 
+  documents, 
+  onDocumentSelect, 
+  onDocumentDelete,
+  deletingId 
+}: DocumentListProps) => {
   const getFileIcon = (fileType: string) => {
     if (fileType.includes('pdf')) return <FileText className="h-5 w-5 text-red-600" />;
     if (fileType.includes('image')) return <Image className="h-5 w-5 text-green-600" />;
@@ -86,6 +93,21 @@ export const DocumentList = ({ documents, onDocumentSelect }: DocumentListProps)
                 >
                   <Download className="h-4 w-4" />
                 </Button>
+                {onDocumentDelete && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => onDocumentDelete(document.id)}
+                    disabled={deletingId === document.id}
+                    className="text-red-600 hover:text-red-700"
+                  >
+                    {deletingId === document.id ? (
+                      <div className="h-4 w-4 animate-spin rounded-full border-2 border-red-600 border-t-transparent" />
+                    ) : (
+                      <Trash2 className="h-4 w-4" />
+                    )}
+                  </Button>
+                )}
               </div>
             </CardContent>
           </Card>

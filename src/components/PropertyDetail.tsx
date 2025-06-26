@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { ArrowLeft, Upload, FileText, Image } from "lucide-react";
+import { ArrowLeft, Upload, FileText, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -8,6 +8,8 @@ import { Property, Document } from "@/pages/Index";
 import { FileUpload } from "./FileUpload";
 import { DocumentList } from "./DocumentList";
 import { DocumentViewer } from "./DocumentViewer";
+import { LoadingSpinner } from "./LoadingSpinner";
+import { useDocuments } from "@/hooks/useDocuments";
 
 interface PropertyDetailProps {
   property: Property;
@@ -17,19 +19,16 @@ interface PropertyDetailProps {
 
 export const PropertyDetail = ({ property, onBack, onDocumentsUpdate }: PropertyDetailProps) => {
   const [selectedDocument, setSelectedDocument] = useState<Document | null>(null);
+  const { uploading, deleting, uploadDocuments, deleteDocument } = useDocuments(property.id);
 
-  const handleFileUpload = (files: File[]) => {
-    const newDocuments: Document[] = files.map(file => ({
-      id: Date.now().toString() + Math.random().toString(36).substring(7),
-      fileName: file.name,
-      fileType: file.type,
-      fileUrl: URL.createObjectURL(file),
-      uploadDate: new Date().toISOString(),
-      propertyId: property.id
-    }));
-
-    const updatedDocuments = [...property.documents, ...newDocuments];
-    onDocumentsUpdate(property.id, updatedDocuments);
+  const handleFileUpload = async (files: File[]) => {
+    try {
+      const newDocuments = await uploadDocuments(files);
+      const updatedDocuments = [...property.documents, ...newDocuments];
+      onDocumentsUpdate(property.id, updatedDocuments);
+    } catch (err) {
+      console.error('Failed to upload documents:', err);
+    }
   };
 
   const handleDocumentSelect = (document: Document) => {
@@ -38,6 +37,18 @@ export const PropertyDetail = ({ property, onBack, onDocumentsUpdate }: Property
 
   const handleDocumentClose = () => {
     setSelectedDocument(null);
+  };
+
+  const handleDocumentDelete = async (documentId: string) => {
+    try {
+      const success = await deleteDocument(documentId);
+      if (success) {
+        const updatedDocuments = property.documents.filter(doc => doc.id !== documentId);
+        onDocumentsUpdate(property.id, updatedDocuments);
+      }
+    } catch (err) {
+      console.error('Failed to delete document:', err);
+    }
   };
 
   return (
@@ -141,13 +152,19 @@ export const PropertyDetail = ({ property, onBack, onDocumentsUpdate }: Property
                 </TabsList>
                 
                 <TabsContent value="upload" className="mt-6">
-                  <FileUpload onFileUpload={handleFileUpload} />
+                  {uploading ? (
+                    <LoadingSpinner text="Uploading documents..." />
+                  ) : (
+                    <FileUpload onFileUpload={handleFileUpload} />
+                  )}
                 </TabsContent>
                 
                 <TabsContent value="view" className="mt-6">
                   <DocumentList 
                     documents={property.documents}
                     onDocumentSelect={handleDocumentSelect}
+                    onDocumentDelete={handleDocumentDelete}
+                    deletingId={deleting}
                   />
                 </TabsContent>
               </Tabs>
